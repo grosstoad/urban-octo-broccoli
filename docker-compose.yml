@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  whatsapp-ai-bot:
+    build: .
+    container_name: whatsapp-ai-assistant
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    volumes:
+      # Persist WhatsApp session
+      - ./.wwebjs_auth:/app/.wwebjs_auth
+      # Persist logs
+      - ./logs:/app/logs
+      # Persist database
+      - ./data:/app/data
+      # Persist OAuth tokens
+      - ./tokens:/app/tokens
+    ports:
+      # OAuth callback endpoint
+      - "3000:3000"
+    networks:
+      - bot-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  bot-network:
+    driver: bridge
