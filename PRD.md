@@ -184,14 +184,35 @@ A WhatsApp-based AI assistant that helps a couple (two users) manage their calen
 
 ### 3.1 Architecture
 
-#### 3.1.1 Core Components
-- **WhatsApp Client:** whatsapp-web.js with QR code authentication
+#### 3.1.1 WhatsApp Integration Decision
+
+**Recommended: WhatsApp Business API** ✅
+- Official Meta API (no ban risk)
+- Free tier: 1,000 conversations/month (your 300/month is covered)
+- User-initiated conversations: FREE
+- Serverless deployment possible (Vercel, Cloudflare Workers)
+- Lower total cost: $4-6/month vs $7-11/month with whatsapp-web.js
+- Production-ready with SLA
+- Setup time: 1-2 weeks (approval process)
+
+**Alternative: whatsapp-web.js** ⚠️
+- For prototyping/testing only
+- FREE but violates WhatsApp ToS (ban risk)
+- Requires persistent server (Docker/VPS)
+- Quick setup (QR code, immediate)
+- Plan to migrate to Business API for production
+- Use throwaway phone number only
+
+**See `WHATSAPP_COMPARISON.md` for detailed analysis**
+
+#### 3.1.2 Core Components
+- **WhatsApp Client:** WhatsApp Business API (Cloud API recommended)
 - **AI Engine:** Claude Agent SDK (with built-in web search)
 - **Database:** SQLite for conversation history, memory, state
 - **Logging:** Winston with daily rotation
-- **Deployment:** Docker container on Railway/Fly.io/VPS
+- **Deployment:** Serverless (Vercel) or Container (Railway/Fly.io)
 
-#### 3.1.2 Data Flow
+#### 3.1.3 Data Flow
 ```
 WhatsApp Message → Bot Receives → Check Mention
                                     ↓
